@@ -4,48 +4,90 @@ declare const chrome: any;
 (() => {
   'use strict';
 
+
+  type Preset = {
+    width: string;
+    height: string;
+    top: string;
+    right: string;
+    left: string;
+    box: {
+      clipPath: string;
+    }
+  }
+
+  type Shape = "square" | "circle";
+
+  const presetForShape = (shape: Shape): Preset => {
+    switch (shape) {
+      case "square":
+        return {
+          width: "420px",
+          height: "420px",
+          top: "16px",
+          right: "16px",
+          left: "auto",
+          box: {
+            clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
+          }
+        }
+      default: "circle"
+        return {
+          width: "420px",
+          height: "420px",
+          right: "auto",
+          top: "16px",
+          left: "16px",
+          box: {
+            clipPath: "circle(50% at 50% 50%)",
+          }
+        }
+    }
+  }
+
   
   const displayContent = (data: string) => {
     const ID = "__square_overlay__";
     const existing = document.getElementById(ID);
     if (existing) { existing.remove(); return; }
   
-    // Host attached to <html> for stability
     const host = document.createElement("div");
     host.id = ID;
   
-    // Important: only the box captures events, not the whole viewport
-    host.style.position = "fixed";
-    host.style.top = "16px";
-    host.style.right = "16px";
-    host.style.zIndex = "2147483647";
-    host.style.pointerEvents = "auto"; // capture inside
-    // Do NOT set width/height on host if you only want the box region clickable.
-    // Keep host sized to the box itself.
+    const styleHost = (shape: Shape) => {
+      const preset = presetForShape(shape);
+      host.style.position = "fixed";
+      host.style.top = preset.top;
+      host.style.right = preset.right;
+      host.style.left = preset.left;
+      host.style.zIndex = "2147483647";
+      host.style.width = preset.width;
+      host.style.height = preset.height;
+      host.style.pointerEvents = "auto";
+    }
+
+    const randomShape = selectRandomShape() as Shape;
+    styleHost(randomShape);
   
     document.documentElement.appendChild(host);
-  
     const shadow = host.attachShadow({ mode: "open" });
     shadow.innerHTML = `
       <style>
-        :host { all: initial; }
-  
         .box {
-          width: 420px;
-          height: 420px;
+          width: 100%;
+          height: 100%;
           background: black;
           display: flex;
           flex-direction: column;
-          pointer-events: auto; /* ensure it captures */
+          pointer-events: auto;
           overflow: hidden;
         }
-  
         pre {
           flex: 1;
           margin: 0;
           padding: 10px 12px;
           overflow: auto;
-          white-space: pre;
+          white-space: wrap;
           word-break: break-word;
           font: 12px/1.35 ui-monospace, monospace;
           color: #fff;
@@ -62,6 +104,12 @@ declare const chrome: any;
   
     // Block events ONLY when they happen inside the box
     const box = shadow.getElementById("box");
+    if (!box) return;
+    
+    const preset = presetForShape(randomShape);
+    // Apply shape to box based on shape
+    if (preset.box.clipPath) box.style.clipPath = preset.box.clipPath;
+
     const block = (e: Event) => {
       e.stopPropagation();
       // preventDefault stops page scroll on wheel, etc.
@@ -74,7 +122,7 @@ declare const chrome: any;
   }
 
   const selectRandomShape = () => {
-    const shapes: string[] = ['square'];
+    const shapes: Shape[] = ['square', 'circle'];
     const randomIndex = Math.floor(Math.random() * shapes.length)
     return shapes[randomIndex];
   }
