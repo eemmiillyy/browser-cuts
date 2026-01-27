@@ -1,0 +1,13 @@
+{
+  "name": "browser-cuts",
+  "version": "1.0.0",
+  "description": "Browser cuts extension inspired by gordon matta clark.",
+  "private": true,
+  "scripts": {
+    "build": "npx esbuild content.ts --bundle --outfile=content.js --format=iife"
+  },
+  "devDependencies": {
+    "esbuild": "^0.27.2",
+    "typescript": "5.8.3"
+  }
+}
