@@ -16,7 +16,7 @@ declare const chrome: any;
     }
   }
 
-  type Shape = "square" | "circle";
+  type Shape = "square" | "circle" | "triangle" | "triangleHorizontal";
 
   const presetForShape = (shape: Shape): Preset => {
     switch (shape) {
@@ -24,13 +24,35 @@ declare const chrome: any;
         return {
           width: "420px",
           height: "420px",
-          top: "16px",
+          top: "500px",
           right: "16px",
           left: "auto",
           box: {
-            clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
+            clipPath: "polygon(0% 20%, 97% 0%, 100% 98%, 3% 100%)",
           }
         }
+      case "triangle":  
+      return {
+        width: "200px",
+        height: "1220px",
+        top: "0px",
+        right: "380px",
+        left: "auto",
+        box: {
+          clipPath: "polygon(42% 0%, 58% 0%, 50% 150%)",
+        }
+      }
+      case "triangleHorizontal":  
+      return {
+        width: "1700px",
+        height: "1220px",
+        top: "0px",
+        right: "700px",
+        left: "auto",
+        box: {
+          clipPath: "polygon(0% 38%, 0% 62%, 150% 50%)",
+        }
+      }
       default: "circle"
         return {
           width: "420px",
@@ -63,7 +85,7 @@ declare const chrome: any;
       host.style.zIndex = "2147483647";
       host.style.width = preset.width;
       host.style.height = preset.height;
-      host.style.pointerEvents = "auto";
+      host.style.pointerEvents = "none";
     }
 
     const randomShape = selectRandomShape() as Shape;
@@ -107,6 +129,7 @@ declare const chrome: any;
     if (!box) return;
     
     const preset = presetForShape(randomShape);
+    console.log("Selected shape:", randomShape, "with preset:", preset);
     // Apply shape to box based on shape
     if (preset.box.clipPath) box.style.clipPath = preset.box.clipPath;
 
@@ -122,7 +145,7 @@ declare const chrome: any;
   }
 
   const selectRandomShape = () => {
-    const shapes: Shape[] = ['square', 'circle'];
+    const shapes: Shape[] = ['square', 'circle', 'triangle', 'triangleHorizontal'];
     const randomIndex = Math.floor(Math.random() * shapes.length)
     return shapes[randomIndex];
   }
