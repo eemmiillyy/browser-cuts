@@ -3,6 +3,13 @@
   "name": "Browser Cuts",
   "version": "1.0.0",
   "description": "Browser cuts extension inspired by gordon matta clark.",
+  "icons": {
+    "16": "icon16.png",
+    "32": "icon32.png",
+    "64": "icon64.png",
+    "128": "icon128.png",
+    "256": "icon256.png"
+  },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
